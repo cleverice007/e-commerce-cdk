@@ -16,7 +16,9 @@ export class ApiGateway extends Construct {
         // Product api gateway
         this.createProductApi(props.productMicroservice);
         // Basket api gateway
-      
+        this.createBasketApi(props.basketMicroservice);
+        // Order api gateway
+        this.createOrderApi(props.orderingMicroservices);
     }
 
     private createProductApi(productMicroservice: IFunction) {
@@ -82,6 +84,28 @@ export class ApiGateway extends Construct {
         const basketCheckout = basket.addResource('checkout');
         basketCheckout.addMethod('POST'); // POST /basket/checkout
             // expected request payload : { userName : mason }
+    }
+
+    private createOrderApi(orderingMicroservices: IFunction) {
+    
+        // GET /order 
+        // GET /order/{userName}
+    
+        const apigw = new LambdaRestApi(this, 'orderApi', {
+            restApiName: 'Order Service',
+            handler: orderingMicroservices,
+            proxy: false
+        });
+    
+        const order = apigw.root.addResource('order');
+        order.addMethod('GET');  // GET /order        
+    
+        const singleOrder = order.addResource('{userName}');
+        singleOrder.addMethod('GET');  // GET /order/{userName}
+            // expected request : xxx/order/mason?orderDate=timestamp
+            // ordering ms grap input and query parameters and filter to dynamo db
+    
+        return singleOrder;
     }
 
 }
