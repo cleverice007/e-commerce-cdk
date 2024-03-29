@@ -49,4 +49,39 @@ export class ApiGateway extends Construct {
 
         return singleProduct;
     }
+
+    private createBasketApi(basketMicroservice: IFunction) {
+        
+        // Basket microservices api gateway
+        // root name = basket
+
+        // GET /basket
+        // POST /basket
+
+        // Single basket with userName parameter
+        // GET /basket/{userName}
+        // DELETE /basket/{userName}
+
+        // checkout basket async flow
+        // POST /basket/checkout
+
+        const apigw = new LambdaRestApi(this, 'basketApi', {
+            restApiName: 'Basket Service',
+            handler: basketMicroservice,
+            proxy: false
+        });
+
+        const basket = apigw.root.addResource('basket');
+        basket.addMethod('GET');  // GET /basket
+        basket.addMethod('POST');  // POST /basket
+
+        const singleBasket = basket.addResource('{userName}');
+        singleBasket.addMethod('GET');  // GET /basket/{userName}
+        singleBasket.addMethod('DELETE'); // DELETE /basket/{userName}
+
+        const basketCheckout = basket.addResource('checkout');
+        basketCheckout.addMethod('POST'); // POST /basket/checkout
+            // expected request payload : { userName : mason }
+    }
+
 }
