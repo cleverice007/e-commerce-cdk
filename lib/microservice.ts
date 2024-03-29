@@ -15,7 +15,7 @@ export class Microservices extends Construct {
     public readonly basketMicroservice: NodejsFunction;
     public readonly orderingMicroservice: NodejsFunction;
 
-    constructor(scope: Construct, id: string, props: SwnMicroservicesProps){
+    constructor(scope: Construct, id: string, props: MicroserviceProps){
         super(scope, id);
                 
         // product microservices
@@ -36,7 +36,7 @@ export class Microservices extends Construct {
                 PRIMARY_KEY: 'id',
                 DYNAMODB_TABLE_NAME: productTable.tableName,
             },
-            runtime: Runtime.NODEJS_14_X,
+            runtime: Runtime.NODEJS_20_X,
         }
     
         const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
@@ -47,3 +47,4 @@ export class Microservices extends Construct {
         productTable.grantReadWriteData(productFunction);
         return productFunction;
     }
+}
