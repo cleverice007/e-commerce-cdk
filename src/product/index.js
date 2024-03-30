@@ -82,3 +82,46 @@ const getProduct = async (productId) => {
       throw e;
     }
   }
+
+  const createProduct = async (event) => {
+    console.log(`createProduct function. event : "${event}"`);
+    try {
+      const productRequest = JSON.parse(event.body);
+      // set productid
+      const productId = uuidv4();
+      productRequest.id = productId;
+  
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME,
+        Item: marshall(productRequest || {})
+      };
+  
+      const createResult = await ddbClient.send(new PutItemCommand(params));
+  
+      console.log(createResult);
+      return createResult;
+  
+    } catch(e) {
+      console.error(e);
+      throw e;
+    }
+  }
+  
+  const deleteProduct = async (productId) => {
+    console.log(`deleteProduct function. productId : "${productId}"`);
+  
+    try {
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME,
+        Key: marshall({ id: productId }),
+      };
+  
+      const deleteResult = await ddbClient.send(new DeleteItemCommand(params));
+  
+      console.log(deleteResult);
+      return deleteResult;
+    } catch(e) {
+      console.error(e);
+      throw e;
+    }
+  }
