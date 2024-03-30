@@ -64,3 +64,21 @@ const getProduct = async (productId) => {
       throw e;
     }
   }
+
+  const getAllProducts = async () => {
+    console.log("getAllProducts");
+    try {
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME
+      };
+  
+      const { Items } = await ddbClient.send(new ScanCommand(params));
+  
+      console.log(Items);
+      return (Items) ? Items.map((item) => unmarshall(item)) : {};
+  
+    } catch(e) {
+      console.error(e);
+      throw e;
+    }
+  }
