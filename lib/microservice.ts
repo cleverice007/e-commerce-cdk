@@ -6,45 +6,35 @@ import { join } from "path";
 
 interface MicroserviceProps {
     productTable: ITable;
-    basketTable: ITable;
-    orderTable: ITable;
 }
 
 export class Microservices extends Construct {
     public readonly productMicroservice: NodejsFunction;
-    public readonly basketMicroservice: NodejsFunction;
-    public readonly orderingMicroservice: NodejsFunction;
 
     constructor(scope: Construct, id: string, props: MicroserviceProps){
-        super(scope, id);
-                
-        // product microservices
-        this.productMicroservice = this.createProductFunction(props.productTable);
-        // basket microservices
-        this.basketMicroservice = this.createBasketFunction(props.basketTable);
-        // ordering Microservice
-        this.orderingMicroservice = this.createOrderingFunction(props.orderTable);
-    }
-    private createProductFunction(productTable: ITable) : NodejsFunction {
+        super(scope, id);        
+        
         const nodeJsFunctionProps: NodejsFunctionProps = {
             bundling: {
-                externalModules: [
-                    'aws-sdk', // Use the 'aws-sdk' available in the Lambda runtime
-                ],
-            },      
-            environment: {
-                PRIMARY_KEY: 'id',
-                DYNAMODB_TABLE_NAME: productTable.tableName,
+              externalModules: [
+                'aws-sdk'
+              ]
             },
-            runtime: Runtime.NODEJS_20_X,
-        }
-    
-        const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+            environment: {
+              PRIMARY_KEY: 'id',
+              DYNAMODB_TABLE_NAME: props.productTable.tableName
+            },
+            runtime: Runtime.NODEJS_20_X
+          }
+      
+          // Product microservices lambda function
+          const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
             entry: join(__dirname, `/../src/product/index.js`),
             ...nodeJsFunctionProps,
-        });
-            
-        productTable.grantReadWriteData(productFunction);
-        return productFunction;
+          })
+      
+        props.productTable.grantReadWriteData(productFunction);
+
+        this.productMicroservice = productFunction;
     }
 }
