@@ -12,12 +12,12 @@ export class ECommerceCdkStack extends Stack {
     const database = new DynamoDB(this, 'Database');    
 
     const microservices = new Microservices(this, 'Microservices', {
-      productTable: database.productTable
-    });
+      productTable: database.productTable,
+      basketTable: database.basketTable    });
 
     const apigateway = new ApiGateway(this, 'ApiGateway', {
       productMicroservice: microservices.productMicroservice,
-    });    
+      basketMicroservice: microservices.basketMicroservice    });    
   }
 }
 
