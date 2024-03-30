@@ -1,22 +1,27 @@
-import * as cdk from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ApiGateway } from './apigateway';
+import {DynamoDB } from './database';
+import {Microservices} from './microservice';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
-export class ECommerceCdkStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class AwsMicroservicesStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-    const apigateway =  ApiGateway(this, 'ApiGateway', {
-      productMicroservice: microservices.productMicroservice,
-      basketMicroservice: microservices.basketMicroservice,
-      orderingMicroservices: microservices.orderingMicroservice
+    const database = new DynamoDB(this, 'Database');    
+
+    const microservices = new Microservices(this, 'Microservices', {
+      productTable: database.productTable
     });
+
+    const apigateway = new ApiGateway(this, 'ApiGateway', {
+      productMicroservice: microservices.productMicroservice,
+    });    
+  }
+}
 
     // example resource
     // const queue = new sqs.Queue(this, 'ECommerceCdkQueue', {
     //   visibilityTimeout: cdk.Duration.seconds(300)
     // });
-  }
-}
