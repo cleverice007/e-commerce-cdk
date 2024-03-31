@@ -1,6 +1,8 @@
 import { DeleteItemCommand, GetItemCommand, PutItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { ddbClient } from "./ddbClient";
+import { ebClient } from "./eventBridgeClient";
+
 
 exports.handler = async function(event) {
     console.log("request:", JSON.stringify(event, undefined, 2));
