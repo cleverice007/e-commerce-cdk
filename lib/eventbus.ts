@@ -4,8 +4,8 @@ import { IFunction } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 
 interface EventBusProps {
-    publisherFuntion: IFunction;
-    targetFuntion: IFunction;
+    publisherFunction: IFunction;
+    targetFunction: IFunction;
 }
 
 export class EventBusConstruct extends Construct{
@@ -30,9 +30,9 @@ export class EventBusConstruct extends Construct{
             });
         
             // need to pass target to Ordering Lambda service
-            checkoutBasketRule.addTarget(new LambdaFunction(props.targetFuntion)); 
+            checkoutBasketRule.addTarget(new LambdaFunction(props.targetFunction)); 
             
-            bus.grantPutEventsTo(props.publisherFuntion);
+            bus.grantPutEventsTo(props.publisherFunction);
                 // AccessDeniedException - is not authorized to perform: events:PutEvents
     
         }
