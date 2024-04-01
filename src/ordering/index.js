@@ -3,15 +3,25 @@ import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { ddbClient } from "./ddbClient";
 
 
-
 exports.handler = async function(event) {
-    console.log("request:", JSON.stringify(event, undefined, 2));
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "text/plain" },
-      body: `Hello from Ordering ! You've hit ${event.path}\n`
-    };	    
+  console.log("request:", JSON.stringify(event, undefined, 2));
+ 
+  const eventType = event['detail-type'];
+  if (eventType !== undefined) {
+    await eventBridgeInvocation(event);
+
+  } else {
+    return await apiGatewayInvocation(event);
+  }
 };
+
+const eventBridgeInvocation = async (event) => {
+console.log(`eventBridgeInvocation function. event : "${event}"`);
+
+// create order item into db
+await createOrder(event.detail);
+}
+
 
 
 const createOrder = async (basketCheckoutEvent) => {
