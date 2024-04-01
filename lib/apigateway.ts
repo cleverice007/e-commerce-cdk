@@ -16,6 +16,8 @@ export class ApiGateway extends Construct {
             this.createProductApi(props.productMicroservice);
             // Basket api gateway
             this.createBasketApi(props.basketMicroservice);
+            // Order api gateway
+            this.createOrderApi(props.orderMicroservice);
         }
         
             private createProductApi(productMicroservice: IFunction) {
@@ -78,32 +80,33 @@ export class ApiGateway extends Construct {
                   basketCheckout.addMethod('POST'); // POST /basket/checkout
                       // expected request payload : { userName : swn }
               }
-          
-          }
-
-          private createOrderApi(orderingMicroservices: IFunction) {
-            // Ordering microservices api gateway
-            // root name = order
-    
-            // GET /order
-            // GET /order/{userName}
-            // expected request : xxx/order/swn?orderDate=timestamp
-            // ordering ms grap input and query parameters and filter to dynamo db
-    
-            const apigw = new LambdaRestApi(this, 'orderApi', {
-                restApiName: 'Order Service',
-                handler: orderingMicroservices,
-                proxy: false
-            });
+              private createOrderApi(orderMicroservices: IFunction) {
+                // Ordering microservices api gateway
+                // root name = order
         
-            const order = apigw.root.addResource('order');
-            order.addMethod('GET');  // GET /order        
-        
-            const singleOrder = order.addResource('{userName}');
-            singleOrder.addMethod('GET');  // GET /order/{userName}
+                // GET /order
+                // GET /order/{userName}
                 // expected request : xxx/order/swn?orderDate=timestamp
                 // ordering ms grap input and query parameters and filter to dynamo db
         
-            return singleOrder;
-        }
-    }
+                const apigw = new LambdaRestApi(this, 'orderApi', {
+                    restApiName: 'Order Service',
+                    handler: orderMicroservices,
+                    proxy: false
+                });
+            
+                const order = apigw.root.addResource('order');
+                order.addMethod('GET');  // GET /order        
+            
+                const singleOrder = order.addResource('{userName}');
+                singleOrder.addMethod('GET');  // GET /order/{userName}
+                    // expected request : xxx/order/swn?orderDate=timestamp
+                    // ordering ms grap input and query parameters and filter to dynamo db
+            
+                return singleOrder;
+            }
+          
+          }
+
+          
+    
