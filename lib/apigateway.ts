@@ -5,6 +5,7 @@ import { Construct } from "constructs";
 interface ApiGatewayProps {
     productMicroservice: IFunction  
     basketMicroservice: IFunction
+    orderMicroservice: IFunction
 }
 
 export class ApiGateway extends Construct {    
@@ -79,3 +80,30 @@ export class ApiGateway extends Construct {
               }
           
           }
+
+          private createOrderApi(orderingMicroservices: IFunction) {
+            // Ordering microservices api gateway
+            // root name = order
+    
+            // GET /order
+            // GET /order/{userName}
+            // expected request : xxx/order/swn?orderDate=timestamp
+            // ordering ms grap input and query parameters and filter to dynamo db
+    
+            const apigw = new LambdaRestApi(this, 'orderApi', {
+                restApiName: 'Order Service',
+                handler: orderingMicroservices,
+                proxy: false
+            });
+        
+            const order = apigw.root.addResource('order');
+            order.addMethod('GET');  // GET /order        
+        
+            const singleOrder = order.addResource('{userName}');
+            singleOrder.addMethod('GET');  // GET /order/{userName}
+                // expected request : xxx/order/swn?orderDate=timestamp
+                // ordering ms grap input and query parameters and filter to dynamo db
+        
+            return singleOrder;
+        }
+    }
