@@ -148,3 +148,31 @@ const getBasket = async (userName) => {
     await deleteBasket(checkoutRequest.userName);
     
   }
+
+  const prepareOrderPayload = (checkoutRequest, basket) => {    
+    console.log("prepareOrderPayload");
+    
+    // prepare order payload -> calculate totalprice and combine checkoutRequest and basket items
+    // aggregate and enrich request and basket data in order to create order payload    
+    try {
+        if (basket == null || basket.items == null) {
+            throw new Error(`basket should exist in items: "${basket}"`);
+        }
+  
+        // calculate totalPrice
+        let totalPrice = 0;
+        basket.items.forEach(item => totalPrice = totalPrice + item.price);
+        checkoutRequest.totalPrice = totalPrice;
+        console.log(checkoutRequest);
+    
+        // copies all properties from basket into checkoutRequest
+        Object.assign(checkoutRequest, basket);
+        console.log("Success prepareOrderPayload, orderPayload:", checkoutRequest);
+        return checkoutRequest;
+  
+      } catch(e) {
+        console.error(e);
+        throw e;
+    }    
+  }
+  
