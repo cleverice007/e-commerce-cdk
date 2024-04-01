@@ -176,3 +176,30 @@ const getBasket = async (userName) => {
     }    
   }
   
+
+const publishCheckoutBasketEvent = async (checkoutPayload) => {
+  console.log("publishCheckoutBasketEvent with payload :", checkoutPayload);
+  try {
+      // eventbridge parameters for setting event to target system
+      const params = {
+          Entries: [
+              {
+                  Source: process.env.EVENT_SOURCE,
+                  Detail: JSON.stringify(checkoutPayload),
+                  DetailType: process.env.EVENT_DETAILTYPE,
+                  Resources: [ ],
+                  EventBusName: process.env.EVENT_BUSNAME
+              },
+          ],
+      };
+   
+      const data = await ebClient.send(new PutEventsCommand(params));
+  
+      console.log("Success, event sent; requestID:", data);
+      return data;
+  
+    } catch(e) {
+      console.error(e);
+      throw e;
+  }
+}
