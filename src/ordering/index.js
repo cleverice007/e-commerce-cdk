@@ -55,3 +55,44 @@ const getAllOrders = async () => {
       throw e;
   }
 }
+
+const apiGatewayInvocation = async (event) => {
+  let body;
+
+  try {
+    if (event.httpMethod === "GET") {
+        if (event.pathParameters != null) {
+            // if there are path parameters, get the order
+            body = await getOrder(event);
+        } else {
+            // if there are no path parameters, get all orders
+            body = await getAllOrders();
+        }
+    } else {
+        // if the HTTP method is not GET, throw an error
+        throw new Error(`Unsupported route: "${event.httpMethod}"`);
+    }
+
+    // return the response
+    console.log(body);
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            message: `Successfully finished operation: "${event.httpMethod}"`,
+            body: body
+        })
+    };
+  }
+  catch(e) {
+      // if there is an error, log the error
+      console.error(e);
+      return {
+      statusCode: 500,
+      body: JSON.stringify({
+          message: "Failed to perform operation.",
+          errorMsg: e.message,
+          errorStack: e.stack,
+        })
+      };
+  }
+}
