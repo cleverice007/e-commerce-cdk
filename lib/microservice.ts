@@ -61,8 +61,11 @@ export class Microservices extends Construct {
               ],
           },
           environment: {
-              PRIMARY_KEY: 'userName',
-              DYNAMODB_TABLE_NAME: basketTable.tableName,
+            PRIMARY_KEY: 'userName',
+            DYNAMODB_TABLE_NAME: basketTable.tableName,
+            EVENT_SOURCE: "com.basket.checkoutbasket",
+            EVENT_DETAILTYPE: "CheckoutBasket",
+            EVENT_BUSNAME: "EventBus"
           },
           runtime: Runtime.NODEJS_20_X,
         }
