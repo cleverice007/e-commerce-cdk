@@ -1,6 +1,6 @@
 import { Duration } from "aws-cdk-lib";
 import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { EventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { IQueue, Queue } from "aws-cdk-lib/aws-sqs";
 import { Construct } from "constructs";
 
@@ -19,7 +19,7 @@ export class QueueConstruct extends Construct {
         visibilityTimeout: Duration.seconds(30) // default value
       });
       
-      props.consumer.addEventSource(new EventSource(this.orderQueue, {
+      props.consumer.addEventSource(new SqsEventSource(this.orderQueue, {
           batchSize: 1
       }));
     }
