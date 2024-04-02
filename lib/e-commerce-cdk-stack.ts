@@ -19,7 +19,8 @@ export class ECommerceCdkStack extends Stack {
 
     const apigateway = new ApiGateway(this, 'ApiGateway', {
       productMicroservice: microservices.productMicroservice,
-      basketMicroservice: microservices.basketMicroservice
+      basketMicroservice: microservices.basketMicroservice,
+      orderMicroservice: microservices.orderMicroservice
     });
 
     const eventbus = new EventBusConstruct(this, 'EventBus', {
