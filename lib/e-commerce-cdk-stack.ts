@@ -1,15 +1,17 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ApiGateway } from './apigateway';
-import {DynamoDB } from './database';
-import {Microservices} from './microservice';
+import { DynamoDB } from './database';
+import { Microservices } from './microservice';
 import { EventBusConstruct } from './eventbus';
+import { QueueConstruct } from './queue';
+
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 export class ECommerceCdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const database = new DynamoDB(this, 'Database');    
+    const database = new DynamoDB(this, 'Database');
 
     const microservices = new Microservices(this, 'Microservices', {
       productTable: database.productTable,
@@ -23,9 +25,14 @@ export class ECommerceCdkStack extends Stack {
       orderMicroservice: microservices.orderMicroservice
     });
 
+    const queue = new QueueConstruct(this, 'Queue', {
+      consumer: microservices.orderMicroservice
+    });
+
+
     const eventbus = new EventBusConstruct(this, 'EventBus', {
       publisherFunction: microservices.basketMicroservice,
-      targetFunction: microservices.orderMicroservice
+      targetQueue: queue.orderQueue
     });
   }
 }
