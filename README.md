@@ -82,20 +82,20 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 - **GET /orders/{orderId}**:Retrieves a specific order by order ID.
 - **POST /orders**: Creates a new order based on the provided order details.
 
-# Integrating Different Triggers
+Integrating Different Triggers
 
 The Order Microservice can be triggered by different AWS services, each leading to specific operations based on the source of the request. This setup allows for flexible and scalable interactions within the serverless architecture. Below is an overview of how different services trigger various functionalities within the microservice.
 
-## API Gateway
+### API Gateway
 When triggered by API Gateway, the microservice directly handles HTTP requests for CRUD operations on orders. This is typically used for synchronous operations where immediate feedback is required for an HTTP client.
 
-### Supported Operations
+ Supported Operations
 - **GET /orders**: Retrieves all orders or a specific order based on the provided path parameter.
 - **POST /orders**: Creates a new order from the request body.
 - **PUT /orders/{orderId}**: Updates an existing order with the provided order details.
 - **DELETE /orders/{orderId}**: Deletes the specified order.
 
-## Amazon SQS
+### Amazon SQS
 SQS is primarily used for decoupling message processing. It buffers messages that require asynchronous processing, such as order processing tasks that do not need immediate response.
-### Supported Operation
+ Supported Operation
 - **Create Order**: Constructs a new order based on event details like customer information and cart items received from the basket checkout process.
